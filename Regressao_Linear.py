@@ -39,40 +39,40 @@ def calcularPerda(Y, m, sigmoid):
 
 # Função para implementar o gradiente descendente
 # Atualiza os pesos e o viés com base no gradiente e na taxa de aprendizado
-def gradienteDescendente(X, Y, matrizPesos, viés, taxaAprendizado, numIteracoes):
+def gradienteDescendente(X, Y, matrizPesos, vies, taxaAprendizado, numIteracoes):
     perdasTotais = []
     for it in range(numIteracoes):
         # Propagação direta para calcular o valor sigmoide
-        valorSigmoide = sigmoid(np.dot(matrizPesos.T, X) + viés)
+        valorSigmoide = sigmoid(np.dot(matrizPesos.T, X) + vies)
         
         # Calcula a perda
         perda = calcularPerda(Y, X.shape[1], valorSigmoide)
         perdasTotais.append(perda)
 
         # Propagação reversa para calcular os gradientes e atualizar os parâmetros
-        gradienteViés = (1 / X.shape[1]) * np.sum(valorSigmoide - Y)
-        viés = viés - taxaAprendizado * gradienteViés
+        gradienteVies = (1 / X.shape[1]) * np.sum(valorSigmoide - Y)
+        vies = vies - taxaAprendizado * gradienteVies
 
         gradienteMatrizPesos = (1 / X.shape[1]) * np.dot(X, (valorSigmoide - Y).T)
         matrizPesos = matrizPesos - taxaAprendizado * gradienteMatrizPesos
     
-    return matrizPesos, viés, perdasTotais
+    return matrizPesos, vies, perdasTotais
 
 # Função para treinar o modelo
 def treinarModelo(X, Y, taxaAprendizado, numIteracoes):
     # Inicializa a matriz de pesos com zeros e o viés com 0
-    viés = 0
+    vies = 0
     matrizPesos = np.zeros((X.shape[0], 1))
     
     # Ajusta os pesos e o viés com base no gradiente descendente
-    matrizPesos, viés, perdas = gradienteDescendente(X, Y, matrizPesos, viés, taxaAprendizado, numIteracoes)
-    return matrizPesos, viés, perdas
+    matrizPesos, vies, perdas = gradienteDescendente(X, Y, matrizPesos, vies, taxaAprendizado, numIteracoes)
+    return matrizPesos, vies, perdas
 
 # Função para prever se a imagem é de um gato ou não
-def preverValores(X, Y, matrizPesos, viés, rotulo):
+def preverValores(X, Y, matrizPesos, vies, rotulo):
     previsaoY = np.zeros((1, X.shape[1]))
     matrizPesos = matrizPesos.reshape(X.shape[0], 1)
-    valorSigmoide = sigmoid(np.dot(matrizPesos.T, X) + viés)
+    valorSigmoide = sigmoid(np.dot(matrizPesos.T, X) + vies)
     
     # Converte as probabilidades em previsões binárias
     for i in range(valorSigmoide.shape[1]):
@@ -100,13 +100,13 @@ if __name__ == "__main__":
     print("Parâmetros: \n- Taxa de Aprendizado: ", taxaAprendizado, "\n- Número de Iterações: ", numIteracoes)
     
     # Treina o modelo
-    matrizPesos, viés, perdas = treinarModelo(trainX, trainY, taxaAprendizado, numIteracoes)
+    matrizPesos, vies, perdas = treinarModelo(trainX, trainY, taxaAprendizado, numIteracoes)
         
     print("Fazendo previsões...")
     # Previsões no conjunto de treinamento
-    treinamento = preverValores(trainX, trainY, matrizPesos, viés, rotulo="Treinamento")
+    treinamento = preverValores(trainX, trainY, matrizPesos, vies, rotulo="Treinamento")
     # Previsões no conjunto de teste
-    previsoesTeste = preverValores(testX, testY, matrizPesos, viés, rotulo="Teste")
+    previsoesTeste = preverValores(testX, testY, matrizPesos, vies, rotulo="Teste")
         
     # Plota a curva de perda ao longo das iterações
     plot.plot(perdas)
@@ -116,10 +116,10 @@ if __name__ == "__main__":
     
     # Calcula e exibe a matriz de confusão para o conjunto de treinamento
     matrizConfusaoTreinamento = sklearn.metrics.confusion_matrix(trainY[0], treinamento[0])
-    sklearn.metrics.ConfusionMatrixDisplay(matrizConfusaoTreinamento, display_labels=trainClasses).plot(include_values=True, cmap=plot.cm.Blues, xticks_rotation='horizontal')
+    sklearn.metrics.ConfusionMatrixDisplay(matrizConfusaoTreinamento, display_labels=["Gato", "Não-Gato"]).plot(include_values=True, cmap=plot.cm.Blues, xticks_rotation='horizontal')
 
     # Calcula e exibe a matriz de confusão para o conjunto de teste
     matrizConfusaoTeste = sklearn.metrics.confusion_matrix(testY[0], previsoesTeste[0])
-    sklearn.metrics.ConfusionMatrixDisplay(matrizConfusaoTeste, display_labels=testClasses).plot(include_values=True, cmap=plot.cm.Blues, xticks_rotation='horizontal')
+    sklearn.metrics.ConfusionMatrixDisplay(matrizConfusaoTeste, display_labels=["Gato", "Não-Gato"]).plot(include_values=True, cmap=plot.cm.Blues, xticks_rotation='horizontal')
     
     plot.show()

@@ -81,10 +81,10 @@ if __name__ == "__main__":
     # Inicializa o modelo, a função de perda e o otimizador
     model = ModeloNeural()
     criterion = nn.CrossEntropyLoss()  # Função de perda para classificação multi-classe
-    optimizer = optim.Adam(model.parameters(), lr=0.0001)  # Otimizador Adam com taxa de aprendizado de 0.001
+    optimizer = optim.Adam(model.parameters(), lr=0.001)  # Otimizador Adam com taxa de aprendizado de 0.001
 
     # Número de épocas para treinamento
-    num_epochs = 1000
+    num_epochs = 500
 
     # Dicionário para armazenar o histórico de treinamento
     history = {"accuracy": [], "val_accuracy": [], "loss": [], "val_loss": []}
@@ -149,6 +149,27 @@ if __name__ == "__main__":
     test_acc = correct / total
     print(f"\nAcurácia no conjunto de teste: {test_acc * 100:.2f}%")
 
-    # Exibe a matriz de confusão
-    ConfusionMatrixDisplay.from_predictions(all_labels, all_preds, display_labels=["gato", "não-gato"], cmap=plot.cm.Blues)
+    # Exibe gráficos de perda e acurácia
+    epochs = range(1, num_epochs + 1)
+    plot.figure()
+    plot.plot(epochs, history["accuracy"], label="Acurácia de Treinamento")
+    plot.plot(epochs, history["val_accuracy"], label="Acurácia de Validação")
+    plot.title("Acurácia durante o treinamento")
+    plot.xlabel("Épocas")
+    plot.ylabel("Acurácia")
+    plot.legend()
+
+    plot.figure()
+    plot.plot(epochs, history["loss"], label="Perda de Treinamento")
+    plot.plot(epochs, history["val_loss"], label="Perda de Validação")
+    plot.title("Perda durante o treinamento")
+    plot.xlabel("Épocas")
+    plot.ylabel("Perda")
+    plot.legend()
+
+    # Exibe a matriz de confusão com título
+    ConfusionMatrixDisplay.from_predictions(
+        all_labels, all_preds, display_labels=["Gato", "Não-Gato"], cmap=plot.cm.Blues
+    )
+    plot.title("Matriz de Confusão no Conjunto de Teste")
     plot.show()
