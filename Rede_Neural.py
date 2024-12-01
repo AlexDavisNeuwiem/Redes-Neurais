@@ -149,6 +149,23 @@ if __name__ == "__main__":
     test_acc = correct / total
     print(f"\nAcurácia no conjunto de teste: {test_acc * 100:.2f}%")
 
+    # Avaliação no conjunto de treinamento
+    model.eval()
+    correct = 0
+    total = 0
+    train_preds = []
+    train_labels = []
+    with torch.no_grad():
+        for inputs, labels in trainLoader:
+            outputs = model(inputs)
+            _, predicted = outputs.max(1)
+            train_preds.extend(predicted.numpy())
+            train_labels.extend(labels.numpy())
+            correct += predicted.eq(labels).sum().item()
+            total += labels.size(0)
+    train_acc = correct / total
+    print(f"\nAcurácia no conjunto de treinamento: {train_acc * 100:.2f}%")
+
     # Exibe gráficos de perda e acurácia
     epochs = range(1, num_epochs + 1)
     plot.figure()
@@ -172,4 +189,11 @@ if __name__ == "__main__":
         all_labels, all_preds, display_labels=["Gato", "Não-Gato"], cmap=plot.cm.Blues
     )
     plot.title("Matriz de Confusão no Conjunto de Teste")
+
+    # Exibe a matriz de confusão para o conjunto de treinamento
+    ConfusionMatrixDisplay.from_predictions(
+        train_labels, train_preds, display_labels=["Gato", "Não-Gato"], cmap=plot.cm.Blues
+    )
+    plot.title("Matriz de Confusão no Conjunto de Treinamento")
+
     plot.show()

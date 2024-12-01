@@ -3,8 +3,8 @@ PIP := pip3
 VENV_DIR := venv
 SRC_DIR := .
 REQ_FILE := requirements.txt
-TARGET1 := Rede_Neural.py
-TARGET2 := Regressao_Linear.py
+TARGET1 := Regressao_Linear.py
+TARGET2 := Rede_Neural.py
 
 .PHONY: all run run1 run2 install-deps clean venv
 
