@@ -2,15 +2,15 @@
 
 ## Como executar
 
-Para rodar os dois modelos da aplicação, basta executar o seguinte comando no terminal:
+Para rodar os dois modelos implementados, basta executar o seguinte comando no terminal:
 
     make
 
-Para rodar o modelo de Regressão Logística, basta executar:
+Para rodar o programa que implementa a **regressão logística**, basta executar:
 
     make run1
 
-Para rodar o modelo de Rede Rasa, basta executar:
+Para rodar o programa que implementa a **rede de camada rasa**, basta executar:
 
     make run2
 
