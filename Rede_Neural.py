@@ -84,7 +84,7 @@ if __name__ == "__main__":
     optimizer = optim.Adam(model.parameters(), lr=0.001)  # Otimizador Adam com taxa de aprendizado de 0.001
 
     # Número de épocas para treinamento
-    num_epochs = 500
+    num_epochs = 1000
 
     # Dicionário para armazenar o histórico de treinamento
     history = {"accuracy": [], "val_accuracy": [], "loss": [], "val_loss": []}
@@ -132,41 +132,30 @@ if __name__ == "__main__":
         if epoch % 10 == 0:
             print(f"Época {epoch+1}/{num_epochs} - Loss: {train_loss:.4f}, Acurácia: {train_acc:.4f}, Val Loss: {val_loss:.4f}, Val Acurácia: {val_acc:.4f}")
 
-    # Avaliação no conjunto de teste
+   # Avaliação no conjunto de teste
     model.eval()
-    correct = 0
-    total = 0
-    all_preds = []
-    all_labels = []
-    with torch.no_grad():
-        for inputs, labels in testLoader:
-            outputs = model(inputs)
-            _, predicted = outputs.max(1)
-            all_preds.extend(predicted.numpy())
-            all_labels.extend(labels.numpy())
-            correct += predicted.eq(labels).sum().item()
-            total += labels.size(0)
-    test_acc = correct / total
-    print(f"\nAcurácia no conjunto de teste: {test_acc * 100:.2f}%")
-
-    # Avaliação no conjunto de treinamento
-    model.eval()
-    correct = 0
-    total = 0
     train_preds = []
     train_labels = []
+    test_preds = []
+    test_labels = []
+
+    # Avaliação no conjunto de treinamento completo
     with torch.no_grad():
-        for inputs, labels in trainLoader:
+        for inputs, labels in DataLoader(TensorDataset(trainX, trainY), batch_size=len(trainX)):
             outputs = model(inputs)
             _, predicted = outputs.max(1)
             train_preds.extend(predicted.numpy())
             train_labels.extend(labels.numpy())
-            correct += predicted.eq(labels).sum().item()
-            total += labels.size(0)
-    train_acc = correct / total
-    print(f"\nAcurácia no conjunto de treinamento: {train_acc * 100:.2f}%")
 
-    # Exibe gráficos de perda e acurácia
+    # Avaliação no conjunto de teste
+    with torch.no_grad():
+        for inputs, labels in testLoader:
+            outputs = model(inputs)
+            _, predicted = outputs.max(1)
+            test_preds.extend(predicted.numpy())
+            test_labels.extend(labels.numpy())
+
+    # Gráficos
     epochs = range(1, num_epochs + 1)
     plot.figure()
     plot.plot(epochs, history["accuracy"], label="Acurácia de Treinamento")
@@ -184,16 +173,24 @@ if __name__ == "__main__":
     plot.ylabel("Perda")
     plot.legend()
 
-    # Exibe a matriz de confusão com título
-    ConfusionMatrixDisplay.from_predictions(
-        all_labels, all_preds, display_labels=["Gato", "Não-Gato"], cmap=plot.cm.Blues
-    )
-    plot.title("Matriz de Confusão no Conjunto de Teste")
-
-    # Exibe a matriz de confusão para o conjunto de treinamento
+    # Matriz de confusão do conjunto de treinamento completo
     ConfusionMatrixDisplay.from_predictions(
         train_labels, train_preds, display_labels=["Gato", "Não-Gato"], cmap=plot.cm.Blues
     )
-    plot.title("Matriz de Confusão no Conjunto de Treinamento")
+    plot.title("Matriz de Confusão no Conjunto de Treinamento Completo")
+
+    # Matriz de confusão do conjunto de teste
+    ConfusionMatrixDisplay.from_predictions(
+        test_labels, test_preds, display_labels=["Gato", "Não-Gato"], cmap=plot.cm.Blues
+    )
+    plot.title("Matriz de Confusão no Conjunto de Teste")
+
+    # Cálculo e impressão da acurácia do conjunto de treinamento completo
+    acuracia_treinamento = accuracy_score(train_labels, train_preds)
+    print(f"Acurácia no Conjunto de Treinamento Completo: {acuracia_treinamento * 100:.2f}%")
+
+    # Cálculo e impressão da acurácia do conjunto de teste
+    acuracia_teste = accuracy_score(test_labels, test_preds)
+    print(f"Acurácia no Conjunto de Teste: {acuracia_teste * 100:.2f}%")
 
     plot.show()

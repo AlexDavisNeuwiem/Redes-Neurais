@@ -116,10 +116,10 @@ if __name__ == "__main__":
     
     # Calcula e exibe a matriz de confusão para o conjunto de treinamento
     matrizConfusaoTreinamento = sklearn.metrics.confusion_matrix(trainY[0], treinamento[0])
-    sklearn.metrics.ConfusionMatrixDisplay(matrizConfusaoTreinamento, display_labels=["Gato", "Não-Gato"]).plot(include_values=True, cmap=plot.cm.Blues, xticks_rotation='horizontal')
+    sklearn.metrics.ConfusionMatrixDisplay(matrizConfusaoTreinamento, display_labels=["Não Gato", "Gato"]).plot(include_values=True, cmap=plot.cm.Blues, xticks_rotation='horizontal')
 
     # Calcula e exibe a matriz de confusão para o conjunto de teste
     matrizConfusaoTeste = sklearn.metrics.confusion_matrix(testY[0], previsoesTeste[0])
-    sklearn.metrics.ConfusionMatrixDisplay(matrizConfusaoTeste, display_labels=["Gato", "Não-Gato"]).plot(include_values=True, cmap=plot.cm.Blues, xticks_rotation='horizontal')
+    sklearn.metrics.ConfusionMatrixDisplay(matrizConfusaoTeste, display_labels=["Não Gato", "Gato"]).plot(include_values=True, cmap=plot.cm.Blues, xticks_rotation='horizontal')
     
     plot.show()
